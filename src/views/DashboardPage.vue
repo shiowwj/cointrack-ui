@@ -1,5 +1,11 @@
 <template>
   <div class="flex min-h-screen flex-col justify-between">
+    <div
+      v-if="addingState"
+      class="w-screen h-screen fixed top-0 left-0 z-10 bg-gray"
+      v-on:click="away()"
+    ></div>
+    <TransactionModal v-if="addingState"></TransactionModal>
     <div class="overflow-hidden px-4 pt-6">
       <TotalAssetsBalance :totalAssetBalance="assets.totalAssetsBalance" />
       <AssetsOverview :assets="assets.assets" />
@@ -9,9 +15,15 @@
 <script>
 import TotalAssetsBalance from "../components/dashboard/TotalAssetsBalance.vue";
 import AssetsOverview from "../components/dashboard/asset/AssetsOverview.vue";
+import TransactionModal from "../components/common/TransactionModal.vue";
 export default {
   name: "DashBoard",
-  components: { TotalAssetsBalance, AssetsOverview },
+  components: { TotalAssetsBalance, AssetsOverview, TransactionModal },
+  computed: {
+    addingState() {
+      return this.$store.state.isAddingState;
+    },
+  },
   created() {
     this.getAssets();
   },
@@ -33,6 +45,9 @@ export default {
       } catch (err) {
         console.error(err);
       }
+    },
+    away() {
+      this.$store.commit("setAddingState");
     },
   },
 };

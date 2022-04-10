@@ -5,11 +5,15 @@ import router from './router'
 import axios from "axios"
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth"
+import { store } from "./store/store"
+import Datepicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 
 
 const VueApp = createApp(App)
 VueApp.config.globalProperties.$axios = axios
-
+VueApp.use(store)
+VueApp.component('DatePicker', Datepicker)
 // Import the functions you need from the SDKs you need
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -35,4 +39,5 @@ auth.onAuthStateChanged(user => {
         app = VueApp.use(router).mount('#app')
     }
 })
+
 

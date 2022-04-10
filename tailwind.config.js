@@ -10,12 +10,15 @@ module.exports = {
                 'alt-red': '#EA580C',
                 'body-grey': '#9299A6',
                 'background-primary': '#151821',
+                'background-grey': '#EDF0F4',
+                'alt-grey': '#505B73'
             },
             border: {
 
             },
             width: {
                 '100px': '100px',
+                '90p': '90%'
             },
             maxWidth: {
                 '100px': '100px',
@@ -25,7 +28,19 @@ module.exports = {
             },
             borderRadius: {
                 '50p': '50%'
+            },
+            inset: {
+                '5p': '5%',
+                '6p': '6%',
+                '7p': '7%',
+                '8p': '8%',
+                '9p': '9%',
+                '10p': '10%',
+            },
+            height: {
+                'bh': '4vh'
             }
+
         },
         fontFamily: {
             sans: ['Josefin Sans', 'Lexend'],

@@ -15,12 +15,6 @@
         <div class="bg-white px-6 py-8 rounded shadow-md text-black w-full">
           <h1 class="mb-8 text-3xl text-center">Sign up</h1>
           <form @submit.prevent="submitForm">
-            <!-- <input 
-                        type="text"
-                        class="block border border-grey-light w-full p-3 rounded mb-4"
-                        name="fullname"
-                        placeholder="Full Name" /> -->
-
             <input
               type="email"
               v-model="email"
@@ -36,12 +30,6 @@
               name="password"
               placeholder="Password"
             />
-            <!-- <input 
-                        type="password"
-                        class="block border border-grey-light w-full p-3 rounded mb-4"
-                        name="confirm_password"
-                        placeholder="Confirm Password" /> -->
-
             <button
               type="submit"
               class="
@@ -88,18 +76,6 @@
         </div>
       </div>
     </div>
-    <!-- <div>
-    <div v-if="error" class="text-red-500 text-sm">{{ error.message }}</div>
-    <form @submit.prevent="submitForm">
-      <div class="email">
-        <input type="email" v-model="email" placeholder="email" />
-      </div>
-      <div class="password">
-        <input type="password" v-model="password" placeholder="password" />
-      </div>
-      <button type="submit">Register</button>
-    </form>
-  </div> -->
   </div>
 </template>
 

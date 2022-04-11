@@ -18,7 +18,9 @@ module.exports = {
             },
             width: {
                 '100px': '100px',
-                '90p': '90%'
+                '90p': '90%',
+                '85p': '85%',
+                '80p': '80%'
             },
             maxWidth: {
                 '100px': '100px',
@@ -38,7 +40,8 @@ module.exports = {
                 '10p': '10%',
             },
             height: {
-                'bh': '4vh'
+                'bh': '4vh',
+                'display-box': '10vh'
             }
 
         },

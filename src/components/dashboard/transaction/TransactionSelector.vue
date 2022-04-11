@@ -16,13 +16,13 @@
     >
       Sell
     </button>
-    <button
+    <!-- <button
       :class="typeOfTransaction == `TRANSFER` ? `bg-primary-white` : ``"
       class="w-1/3 h-bh rounded-lg"
       @click="selectTransaction('TRANSFER')"
     >
       Transfer
-    </button>
+    </button> -->
   </div>
 </template>
 <script>

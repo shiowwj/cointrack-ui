@@ -23,7 +23,7 @@
     <!-- HOLDINGS START -->
     <td class="text-right h-20">
       <div class="m-0 flex flex-col items-end">
-        ${{ totalValue }}
+        ${{ totalValue.toFixed(2) }}
         <p class="leading-6 m-0 text-gray-600 text-xs">
           {{ totalHolding }} {{ symbol }}
         </p>
@@ -32,13 +32,15 @@
     <!-- HOLDINGS END -->
     <!-- AVG BUY PRICE START -->
     <td class="text-right h-20 hidden md:table-cell">
-      <p class="break-words leading-6 m-0 text-sm">${{ averagePrice }}</p>
+      <p class="break-words leading-6 m-0 text-sm">
+        ${{ averagePrice.toFixed(2) }}
+      </p>
     </td>
     <!-- AVG BUY PRICE END -->
     <!-- ACTIONS START -->
     <td class="text-right h-20 hidden md:table-cell">
       <div class="pr-3">
-        <button class="rounded-50p p-0 w-8">
+        <button class="rounded-50p p-0 w-8" @click="addItemEvent()">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
@@ -115,6 +117,16 @@ export default {
       default() {
         return [];
       },
+    },
+  },
+  methods: {
+    addItemEvent() {
+      this.$store.commit("setAddingState");
+      const currentItem = {
+        name: this.name,
+        symbol: this.symbol,
+      };
+      this.$store.commit("setCurrentItem", currentItem);
     },
   },
 };

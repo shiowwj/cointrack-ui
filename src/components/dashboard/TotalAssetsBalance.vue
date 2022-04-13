@@ -6,7 +6,7 @@
     <div class="box-border h-12 items-center">
       <div class="w-full">
         <div class="text-3xl font-bold leading-6 break-all">
-          <div>${{ totalAssetBalance }}</div>
+          <div>${{ totalAssetBalance.toFixed(2) }}</div>
         </div>
       </div>
     </div>

@@ -11,7 +11,7 @@
         <option value="fantom:FTM">Fantom</option>
       </select>
       <div class="flex flex-row justify-around mb-6">
-        <div class="flex flex-col w-1/2 px-2">
+        <div class="flex flex-col w-1/2 pr-2">
           <label for="quantity" class="font-semibold">Quantity</label>
           <input
             v-model="quantity"
@@ -30,7 +30,7 @@
             step=".0001"
           />
         </div>
-        <div class="flex flex-col w-1/2 px-2">
+        <div class="flex flex-col w-1/2 pl-2">
           <label for="quantity" class="font-semibold">Price Per Coin</label>
           <div
             class="
@@ -39,8 +39,8 @@
               rounded-lg
               h-bh
               items-center
-              py-1
               pl-2
+              py-1
               hover:border-blue-200
             "
           >
@@ -108,6 +108,7 @@
           flex flex-col
           p-4
           mb-6
+          table
         "
       >
         <div>
@@ -148,6 +149,9 @@ export default {
       default: "buy",
     },
   },
+  mounted() {
+    this.getStoreCurrentItem();
+  },
   data() {
     return {
       name: "",
@@ -162,6 +166,7 @@ export default {
   methods: {
     async submitTransaction() {
       let values = this.formatSymbolName(this.name);
+      // TODO: add form validations
       const body = {
         symbol: values.s,
         name: values.n,
@@ -185,31 +190,41 @@ export default {
 
         if (response.status === 200) {
           console.log("response data", response.data);
+          this.reloadPage();
         }
-        console.log("response done");
       } catch (err) {
         console.error(err);
       }
     },
     currentDateTime() {
+      let hours = new Date().getHours();
+      let minutes = new Date().getMinutes();
+
+      if (hours < 10 && hours >= 0) {
+        hours = "0" + hours.toString();
+      }
+
+      if (minutes < 10 && minutes >= 0) {
+        minutes = "0" + minutes.toString();
+      }
+
       let currentDate =
-        new Date().toDateString() +
-        ", " +
-        new Date().getHours() +
-        ":" +
-        new Date().getMinutes();
+        new Date().toDateString() + ", " + hours + ":" + minutes;
       return currentDate;
     },
     formatDateTime(dateTime) {
       let formattedDateTime;
+
       if (typeof dateTime == "object") {
         let dateTimeObj = new Date(dateTime);
+
         formattedDateTime =
           dateTimeObj.toDateString() +
           ", " +
           dateTimeObj.getHours() +
           ":" +
           dateTimeObj.getMinutes();
+
         return formattedDateTime;
       }
       return dateTime;
@@ -220,14 +235,17 @@ export default {
     },
     calculateAmount() {
       let totalAmount = 0;
+
       if (this.quantity > 0 && this.pricePerCoin > 0) {
         totalAmount = this.quantity * this.pricePerCoin;
         if (this.fees > 0) {
           totalAmount = totalAmount - this.fees;
         }
         this.totalValue = totalAmount;
-        return totalAmount;
+
+        return totalAmount.toFixed(2);
       }
+
       this.totalValue = totalAmount;
       return totalAmount;
     },
@@ -250,6 +268,18 @@ export default {
     },
     formatDateToISO(dateTime) {
       return new Date(dateTime).toISOString();
+    },
+    getStoreCurrentItem() {
+      const currentItem = this.$store.state.currentItem;
+      console.log("get current item", currentItem);
+      if (currentItem) {
+        this.name = currentItem.name.toLowerCase() + ":" + currentItem.symbol;
+      }
+    },
+    reloadPage() {
+      this.$store.commit("setCurrentItem", null);
+      this.$store.commit("setAddingState");
+      window.location.reload();
     },
   },
   setup() {

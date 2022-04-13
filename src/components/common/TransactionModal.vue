@@ -50,10 +50,10 @@ export default {
   },
   methods: {
     closeTransactionModal() {
+      this.$store.commit("setCurrentItem", null);
       this.$store.commit("setAddingState");
     },
     onSelectTransaction(type) {
-      console.log("type", type);
       this.typeOfTransaction = type;
     },
   },

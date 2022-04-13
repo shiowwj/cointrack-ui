@@ -40,7 +40,7 @@ module.exports = {
                 '10p': '10%',
             },
             height: {
-                'bh': '4vh',
+                'bh': '5vh',
                 'display-box': '10vh'
             }
 

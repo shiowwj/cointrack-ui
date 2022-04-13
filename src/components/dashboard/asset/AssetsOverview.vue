@@ -48,11 +48,7 @@ export default {
       return this.$store.state.isAddingState;
     },
   },
-  data() {
-    // return {
-    //   isAddingAsset: false,
-    // };
-  },
+  data() {},
   props: {
     assets: {
       type: Object,
@@ -63,9 +59,8 @@ export default {
   },
   methods: {
     addAsset() {
-      console.log("add asset 1", this.$store.state.isAddingState);
       this.$store.commit("setAddingState");
-      console.log("add asset 2", this.$store.state.isAddingState);
+      window.scrollTo(0, 0);
     },
   },
 };

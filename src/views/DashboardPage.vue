@@ -3,9 +3,10 @@
     <div
       v-if="addingState"
       class="w-screen h-screen fixed top-0 left-0 z-10 bg-gray"
-      v-on:click="away()"
+      v-on:click="clickAway()"
     ></div>
     <TransactionModal v-if="addingState"></TransactionModal>
+    <!-- :modalData="modalCurrentItem" -->
     <div class="overflow-hidden px-4 pt-6">
       <TotalAssetsBalance :totalAssetBalance="assets.totalAssetsBalance" />
       <AssetsOverview :assets="assets.assets" />
@@ -41,12 +42,12 @@ export default {
         if (response.status === 200) {
           this.assets = response.data;
         }
-        console.info("get assets", this.assets);
       } catch (err) {
         console.error(err);
       }
     },
-    away() {
+    clickAway() {
+      this.$store.commit("setCurrentItem", null);
       this.$store.commit("setAddingState");
     },
   },

@@ -4,19 +4,23 @@ import { createStore } from 'vuex'
 export const store = createStore({
     state() {
         return {
-            isAddingState: false
+            isAddingState: false,
+            currentItem: {
+                name: "",
+                symbol: "",
+                // averagePrice: "",
+                // totalHolding: "",
+            }
         }
     },
     mutations: {
         setAddingState(state) {
-            // console.log("store: setAddingState ", state.isAddingState)
             state.isAddingState = state.isAddingState ? false : true;
-            // console.log("store: setAddingState ", state.isAddingState)
-            // if (state.addingState) {
-            //     state.addingState = false
-            // } else {
-            //     state.addingState = true
-            // }
+        },
+        setCurrentItem(state, currentItem) {
+            console.log('state current item', state.currentItem)
+            console.log('state current test', currentItem)
+            state.currentItem = currentItem
         }
     }
 })

@@ -12,6 +12,7 @@ import '@vuepic/vue-datepicker/dist/main.css'
 
 const VueApp = createApp(App)
 VueApp.config.globalProperties.$axios = axios
+// VueApp.use(UserStore)
 VueApp.use(store)
 VueApp.component('DatePicker', Datepicker)
 // Import the functions you need from the SDKs you need
@@ -34,7 +35,14 @@ initializeApp(firebaseConfig);
 let app;
 const auth = getAuth()
 auth.onAuthStateChanged(user => {
-    console.log(user)
+    // console.log(user)
+    // console.log("user uuid", user.uid)
+    if (user) {
+        if (user.uid !== "") {
+            store.commit("setCurrentUserState", user.uid)
+        }
+    }
+
     if (!app) {
         app = VueApp.use(router).mount('#app')
     }

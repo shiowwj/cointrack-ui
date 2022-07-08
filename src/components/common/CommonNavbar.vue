@@ -159,6 +159,7 @@ export default {
         const auth = getAuth();
         const user = await signOut(auth);
         console.log("user signout", user);
+        this.$store.commit("removeCurrentUserState");
         this.$router.replace({ name: "login" });
       } catch (err) {
         console.err(err);

@@ -1,60 +1,90 @@
 <template>
   <div>
     <form @submit.prevent="submitTransaction" class="mt-6">
-      <select
-        v-model="name"
-        class="w-full border rounded-lg h-bh mb-5 hover:border-blue-200"
-      >
-        <option value="bitcoin:BTC">Bitcoin</option>
-        <option value="ethereum:ETH">Ethereum</option>
-        <option value="luna:LUNA">Luna</option>
-        <option value="fantom:FTM">Fantom</option>
-      </select>
+      <div class="mb-5">
+        <select
+          v-model="name"
+          class="w-full border rounded-lg h-bh hover:border-blue-200"
+        >
+          <option value="bitcoin:BTC">Bitcoin</option>
+          <option value="ethereum:ETH">Ethereum</option>
+          <option value="luna:LUNA">Luna</option>
+          <option value="fantom:FTM">Fantom</option>
+        </select>
+        <div v-if="errors.name.length > 0" class="error">
+          <span
+            v-for="error in errors.name"
+            :key="error.message"
+            class="text-xs text-red-400"
+            >{{ error.message }}</span
+          >
+        </div>
+      </div>
       <div class="flex flex-row justify-around mb-6">
         <div class="flex flex-col w-1/2 pr-2">
           <label for="quantity" class="font-semibold">Quantity</label>
-          <input
-            v-model="quantity"
-            class="
-              rounded-lg
-              border
-              h-bh
-              items-center
-              pl-2
-              pr-2
-              hover:border-blue-200
-            "
-            type="number"
-            name="quantity"
-            placeholder="0.00"
-            step=".0001"
-          />
+          <div>
+            <input
+              v-model="quantity"
+              class="
+                rounded-lg
+                border
+                h-bh
+                items-center
+                pl-2
+                pr-2
+                hover:border-blue-200
+              "
+              type="number"
+              name="quantity"
+              placeholder="0.00"
+              step=".0001"
+            />
+            <div v-if="errors.quantity.length > 0" class="error">
+              <span
+                v-for="error in errors.quantity"
+                :key="error.message"
+                class="text-xs text-red-400"
+                >{{ error.message }}</span
+              >
+            </div>
+          </div>
         </div>
         <div class="flex flex-col w-1/2 pl-2">
           <label for="quantity" class="font-semibold">Price Per Coin</label>
-          <div
-            class="
-              w-full
-              border
-              rounded-lg
-              h-bh
-              items-center
-              pl-2
-              py-1
-              hover:border-blue-200
-            "
-          >
-            <span class=""
-              >$
-              <input
-                v-model="pricePerCoin"
-                class="border-0 border-opacity-100 outline-0 text-right w-80p"
-                type="number"
-                name="Price Per Coin"
-                placeholder="0.00"
-                step=".0001"
-              />
-            </span>
+          <div>
+            <div
+              class="
+                w-full
+                border
+                rounded-lg
+                h-bh
+                items-center
+                pl-2
+                py-1
+                hover:border-blue-200
+              "
+            >
+              <span class=""
+                >$
+                <input
+                  v-model="pricePerCoin"
+                  class="border-0 border-opacity-100 outline-0 text-right w-80p"
+                  type="number"
+                  name="Price Per Coin"
+                  placeholder="0.00"
+                  step=".0001"
+                />
+              </span>
+            </div>
+            <div v-if="errors.pricePerCoin.length > 0" class="error">
+              <span
+                v-for="error in errors.pricePerCoin"
+                :key="error.message"
+                class="text-xs text-red-400"
+                >{{ error.message }}</span
+              >
+            </div>
           </div>
         </div>
       </div>
@@ -141,6 +171,11 @@
 </template>
 <script>
 import { ref } from "vue";
+import {
+  FormatSymbolName,
+  FormatDateToISO,
+  ValidateSymbolName,
+} from "../../../utils/util";
 export default {
   name: "TransactionForm",
   props: {
@@ -161,11 +196,22 @@ export default {
       fees: 0.0,
       notes: "",
       totalValue: "",
+      currentUser: "",
+      errors: {
+        name: [],
+        quantity: [],
+        pricePerCoin: [],
+      },
     };
   },
   methods: {
     async submitTransaction() {
-      let values = this.formatSymbolName(this.name);
+      if (!this.validateForm()) {
+        return;
+      }
+      let values = FormatSymbolName(this.name);
+
+      this.currentUser = this.$store.state.currentUser;
       // TODO: add form validations
       const body = {
         symbol: values.s,
@@ -175,21 +221,21 @@ export default {
         pricePerCoin: this.pricePerCoin,
         fees: this.fees,
         type: this.transactionType == "BUY" ? "B" : "S",
-        dateTimeTxn: this.formatDateToISO(this.dateOfTransaction),
+        dateTimeTxn: FormatDateToISO(this.dateOfTransaction),
       };
 
       const headers = {
         "Content-Type": "application/json",
-        Uuid: "TEST_WJ_USER",
+        Uuid: this.currentUser,
       };
-      const url = "http://localhost:9010/transactions";
+      const url = `${process.env.VUE_APP_BACKEND_LOCAL_BASEURL}/transactions`;
       console.log("data to submit", body);
       try {
         let response = await this.$axios.post(url, body, { headers: headers });
         console.log("response", response);
 
         if (response.status === 200) {
-          console.log("response data", response.data);
+          //   console.log("response data", response.data);
           this.reloadPage();
         }
       } catch (err) {
@@ -249,26 +295,6 @@ export default {
       this.totalValue = totalAmount;
       return totalAmount;
     },
-    formatSymbolName(inputName) {
-      let name, symbol;
-      let inputArr = inputName.split(":");
-      if (inputArr.length > 0) {
-        name = capitalizeFirstLetter(inputArr[0]);
-        symbol = inputArr[1];
-        return {
-          n: name,
-          s: symbol,
-        };
-      }
-
-      return {
-        n: "",
-        s: "",
-      };
-    },
-    formatDateToISO(dateTime) {
-      return new Date(dateTime).toISOString();
-    },
     getStoreCurrentItem() {
       const currentItem = this.$store.state.currentItem;
       console.log("get current item", currentItem);
@@ -281,6 +307,33 @@ export default {
       this.$store.commit("setAddingState");
       window.location.reload();
     },
+    validateForm() {
+      // reset errors and reevaluate again
+      this.errors.name = [];
+      this.errors.quantity = [];
+      this.errors.pricePerCoin = [];
+      console.log("name", ValidateSymbolName(this.name));
+      if (!ValidateSymbolName(this.name)) {
+        this.errors.name.push({ message: "Please select" });
+      }
+      if (this.quantity == 0) {
+        this.errors.quantity.push({
+          message: "Please enter a quantity amount",
+        });
+      }
+      if (this.pricePerCoin == 0) {
+        this.errors.pricePerCoin.push({ message: "Please enter a price" });
+      }
+
+      if (
+        this.errors.name.length == 0 &&
+        this.errors.quantity.length == 0 &&
+        this.errors.pricePerCoin.length == 0
+      ) {
+        return true;
+      }
+      return false;
+    },
   },
   setup() {
     const date = ref(new Date());
@@ -290,7 +343,7 @@ export default {
   },
 };
 
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+// function capitalizeFirstLetter(string) {
+//   return string.charAt(0).toUpperCase() + string.slice(1);
+// }
 </script>

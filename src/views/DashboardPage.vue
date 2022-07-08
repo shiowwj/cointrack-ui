@@ -35,9 +35,11 @@ export default {
   },
   methods: {
     async getAssets() {
+      const user = this.$store.state.currentUser;
+      console.log("user", user);
       try {
         const response = await this.$axios.get(
-          "http://localhost:9010/assets?uuid=TEST_WJ_USER"
+          `${process.env.VUE_APP_BACKEND_LOCAL_BASEURL}/assets?uuid=${user}`
         );
         if (response.status === 200) {
           this.assets = response.data;

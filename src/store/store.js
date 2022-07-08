@@ -10,7 +10,8 @@ export const store = createStore({
                 symbol: "",
                 // averagePrice: "",
                 // totalHolding: "",
-            }
+            },
+            currentUser: ""
         }
     },
     mutations: {
@@ -18,9 +19,13 @@ export const store = createStore({
             state.isAddingState = state.isAddingState ? false : true;
         },
         setCurrentItem(state, currentItem) {
-            console.log('state current item', state.currentItem)
-            console.log('state current test', currentItem)
             state.currentItem = currentItem
+        },
+        setCurrentUserState(state, currentUserUid) {
+            state.currentUser = currentUserUid
+        },
+        removeCurrentUserState(state) {
+            state.currentUser = ""
         }
     }
 })

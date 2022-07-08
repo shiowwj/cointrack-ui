@@ -24,21 +24,31 @@
           >
             Login Email
           </label>
-          <input
-            class="
-              shadow
-              appearance-none
-              border
-              rounded
-              w-full
-              py-2
-              px-3
-              text-grey-darker
-            "
-            v-model="email"
-            type="text"
-            placeholder="login"
-          />
+          <div class="mb-3">
+            <input
+              class="
+                shadow
+                appearance-none
+                border
+                rounded
+                w-full
+                py-2
+                px-3
+                text-grey-darker
+              "
+              v-model="email"
+              type="text"
+              placeholder="login"
+            />
+            <div v-if="errors.email.length > 0" class="error">
+              <span
+                v-for="error in errors.email"
+                :key="error.message"
+                class="text-xs text-red-400"
+                >{{ error.message }}</span
+              >
+            </div>
+          </div>
         </div>
         <div class="mb-6">
           <label
@@ -47,22 +57,31 @@
           >
             Password
           </label>
-          <input
-            class="
-              shadow
-              appearance-none
-              border border-red
-              rounded
-              w-full
-              py-2
-              px-3
-              text-grey-darker
-              mb-3
-            "
-            v-model="password"
-            type="password"
-            placeholder="******************"
-          />
+          <div class="mb-3">
+            <input
+              class="
+                shadow
+                appearance-none
+                border border-red
+                rounded
+                w-full
+                py-2
+                px-3
+                text-grey-darker
+              "
+              v-model="password"
+              type="password"
+              placeholder="******************"
+            />
+            <div v-if="errors.password.length > 0" class="error">
+              <span
+                v-for="error in errors.password"
+                :key="error.message"
+                class="text-xs text-red-400"
+                >{{ error.message }}</span
+              >
+            </div>
+          </div>
           <!-- <p class="text-red text-xs italic">Please choose a password.</p> -->
         </div>
         <div class="flex items-center justify-between">
@@ -100,6 +119,7 @@
         >
       </form>
     </div>
+    <div>Login with google</div>
   </div>
 </template>
 
@@ -110,11 +130,17 @@ export default {
     return {
       email: "",
       password: "",
-      error: "",
+      errors: {
+        email: [],
+        password: [],
+      },
     };
   },
   methods: {
     async submitLogin() {
+      if (!this.validateForm()) {
+        return;
+      }
       try {
         const auth = getAuth();
         const user = await signInWithEmailAndPassword(
@@ -122,11 +148,33 @@ export default {
           this.email,
           this.password
         );
-        console.log("user logged in", user);
-        this.$router.replace({ name: "dashboard" });
+
+        if (user.operationType == "signIn") {
+          this.$store.commit("setCurrentUserState", user.user.uid);
+          this.$router.replace({ name: "dashboard" });
+        }
       } catch (err) {
         console.error(err);
       }
+    },
+    validateForm() {
+      // reset errors and reevaluate again
+      this.errors.email = [];
+      this.errors.password = [];
+      if (this.email == "") {
+        this.errors.email.push({ message: "Please enter Login email" });
+      }
+
+      if (this.password == "" && this.email != "") {
+        this.errors.password.push({
+          message: "Please enter password",
+        });
+      }
+
+      if (this.errors.email.length == 0 && this.errors.password.length == 0) {
+        return true;
+      }
+      return false;
     },
   },
 };

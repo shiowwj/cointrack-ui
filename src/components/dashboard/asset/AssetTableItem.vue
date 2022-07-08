@@ -61,7 +61,7 @@
           </svg>
         </button>
         <div class="inline-flex m-0">
-          <button class="rounded-50p p-0 w-8">
+          <button class="rounded-50p p-0 w-8" @click="initItemActionsEvent()">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="currentColor"
@@ -127,6 +127,9 @@ export default {
         symbol: this.symbol,
       };
       this.$store.commit("setCurrentItem", currentItem);
+    },
+    initItemActionsEvent() {
+      console.log("open menu action event");
     },
   },
 };

@@ -1,6 +1,7 @@
 <template>
   <div class="flex min-h-screen flex-col justify-between">
     <div class="bg-grey-lighter min-h-screen flex flex-col">
+      {{ errors }}
       <div
         class="
           container
@@ -15,21 +16,40 @@
         <div class="bg-white px-6 py-8 rounded shadow-md text-black w-full">
           <h1 class="mb-8 text-3xl text-center">Sign up</h1>
           <form @submit.prevent="submitForm">
-            <input
-              type="email"
-              v-model="email"
-              class="block border border-grey-light w-full p-3 rounded mb-4"
-              name="email"
-              placeholder="Email"
-            />
-
-            <input
-              type="password"
-              v-model="password"
-              class="block border border-grey-light w-full p-3 rounded mb-4"
-              name="password"
-              placeholder="Password"
-            />
+            <div class="mb-4">
+              <input
+                type="email"
+                v-model="email"
+                class="block border border-grey-light w-full p-3 rounded"
+                name="email"
+                placeholder="Email"
+              />
+              <div v-if="errors.email.length > 0" class="error">
+                <span
+                  v-for="error in errors.email"
+                  :key="error.message"
+                  class="text-xs text-red-400"
+                  >{{ error.message }}</span
+                >
+              </div>
+            </div>
+            <div class="mb-4">
+              <input
+                type="password"
+                v-model="password"
+                class="block border border-grey-light w-full p-3 rounded"
+                name="password"
+                placeholder="Password"
+              />
+              <div v-if="errors.password.length > 0" class="error">
+                <span
+                  v-for="error in errors.password"
+                  :key="error.message"
+                  class="text-xs text-red-400"
+                  >{{ error.message }}</span
+                >
+              </div>
+            </div>
             <button
               type="submit"
               class="
@@ -80,12 +100,16 @@
 </template>
 
 <script>
+// createUserWithEmailAndPassword
 // import * as firebase from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 export default {
   methods: {
     async submitForm() {
+      if (!this.validateForm()) {
+        return;
+      }
       try {
         const auth = getAuth();
         const user = await createUserWithEmailAndPassword(
@@ -98,15 +122,35 @@ export default {
       } catch (err) {
         console.error(err);
       }
-      //   alert("submit form");
-      // firebase.auth()
+    },
+    validateForm() {
+      // reset errors and reevaluate again
+      this.errors.email = [];
+      this.errors.password = [];
+      if (this.email == "") {
+        this.errors.email.push({ message: "Please enter an email" });
+      }
+
+      if (this.password == "" && this.email != "") {
+        this.errors.password.push({
+          message: "Please enter a password",
+        });
+      }
+
+      if (this.errors.email.length == 0 && this.errors.password.length == 0) {
+        return true;
+      }
+      return false;
     },
   },
   data() {
     return {
       email: "",
       password: "",
-      error: "",
+      errors: {
+        email: [],
+        password: [],
+      },
     };
   },
 };
